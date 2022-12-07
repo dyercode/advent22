@@ -9,7 +9,7 @@ actor Main
     match OpenFile(path)
     | let file: File =>
       for line in FileLines(file) do
-        acc.next(consume line)
+        acc.next(consume line, env)
       end
     end
     acc.group_over()
@@ -23,10 +23,15 @@ actor Accumulator
     _current = Vec[U32]
     _mp = mp
 
-  be next(s: String) =>
+  be next(s: String, env: Env) =>
     match s
-    | "" => group_over()
+    | "" =>
+      //env.out.print("empty")
+      _mp.next(_current)
+      _current = Vec[U32]
     | s => try
+        let thing: U32 = s.u32()?
+        //env.out.print(s + ":" + thing.string())
         _current = _current.push(s.u32()?)
       end
     end
