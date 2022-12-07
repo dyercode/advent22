@@ -14,6 +14,9 @@ actor Main
       end
     end
     acc.group_over()
+    // I think I got lucky here that accumulator barely does anything.
+    // no guarantee mh has recieved all messages from acc.
+    // realized as setting up day2
     mh.spit(env)
     mh.spit_sum(env)
 

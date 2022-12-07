@@ -1,5 +1,5 @@
 {
-  description = "advent 2022 day 1";
+  description = "advent 2022";
 
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
