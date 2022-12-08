@@ -45,6 +45,16 @@ class Parser
   fun halves(s: String): (String, String) =>
     s.clone().chop(s.size() / 2)
 
+class Priority
+  fun calc(s: String): U8 =>
+    let lookup = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    try
+      lookup.find(s)?.u8() + 1
+    else
+      0
+    end
+
+
 actor DupeFinder
   var _done: Bool = false
   let _left: Array[U8]

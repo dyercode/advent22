@@ -12,6 +12,7 @@ actor Main is TestList
   fun tag tests(test: PonyTest) =>
     test(_TestSplit)
     test(_TestFindDuplicate)
+    test(_TestPriority)
 
 class iso _TestSplit is UnitTest
     fun name(): String => "split an even-charchount string in half"
@@ -32,6 +33,16 @@ class iso _TestFindDuplicate is UnitTest
 
     fun timed_out(h:TestHelper) =>
       h.complete(false)
+
+class iso _TestPriority is UnitTest
+    fun name(): String => "test priorities"
+
+    fun apply(h: TestHelper) =>
+      let lowest =  "a"
+      let highest = "Z"
+      h.assert_eq[U8](1, m.Priority.calc(consume lowest))
+      h.assert_eq[U8](52, m.Priority.calc(consume highest))
+
 
 class TestNotifier is m.Notified
   let _h: TestHelper
