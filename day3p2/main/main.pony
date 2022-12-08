@@ -15,8 +15,8 @@ type Throw is (Rock | Paper | Scissors)
 actor Main
   new create(env: Env) =>
     let path = FilePath(FileAuth(env.root), "../input/day3.txt")
-    let summer = Summer(env)
-    let pars = ByLine(env, summer)
+    let summer = Summer(EnvPrinter(env))
+    let pars = ByLine(summer)
     match OpenFile(path)
     | let file: File =>
       env.out.print("opened file")
@@ -26,24 +26,22 @@ actor Main
     end
 
 actor Summer
-  let _env: Env
+  let _printer: Printer
   var _tot: U32 = 0
 
-  new create(env: Env) =>
-    _env = env
+  new create(printer: Printer val) =>
+    _printer = printer
 
   be add(p: U8) =>
     _tot = _tot + p.u32()
-    _env.out.print(_tot.string())
+    _printer.print(_tot.string())
 
 
 actor ByLine
-  let _env: Env
   let _summer: Summer
   let _elf_group: Array[String] = Array[String](3)
 
-  new create(env: Env, summer: Summer) =>
-    _env = env
+  new create(summer: Summer) =>
     _summer = summer
 
   be split_pack(s: String) =>
@@ -89,9 +87,9 @@ type UniqueChars is HashSet[U8, HashEq[U8]]
 
 class DupeFinder
   fun find(one: String, two: String, three: String): String =>
-    let first: UniqueChars = scribe(Parser.unique(one))
-    let second: UniqueChars = scribe(Parser.unique(two))
-    let third: UniqueChars = scribe(Parser.unique(three))
+    let first: UniqueChars = scribe(one)
+    let second: UniqueChars = scribe(two)
+    let third: UniqueChars = scribe(three)
     var all = first.op_and(consume second)
     all = all.op_and(consume third)
     try
@@ -111,4 +109,16 @@ class DupeFinder
       letters.set(consume c)
     end
     letters
+
+interface box Printer
+  fun print(s: String iso): None
+
+class EnvPrinter
+  let _env: Env
+
+  new create(env: Env) =>
+    _env = env
+
+  fun print(s: String) =>
+    _env.out.print(consume s)
 
