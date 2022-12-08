@@ -47,16 +47,15 @@ class Parser
 
 
 actor DupeFinder
-  let _left: Array[U32] = Array[U32](24) // longest line in input is 48
-  let _right: Array[U32] = Array[U32](24)
+  let _left: Array[U32]
+  let _right: Array[U32]
   var _done: Bool = false
   let _notify: Notified
 
-  new create(notify: Notified iso) =>
+  new create(notify: Notified iso, l: String, r: String) =>
+    _left = Array[U32](l.size())
+    _right = Array[U32](r.size())
     _notify = consume notify
-
-  be find_duplicate(l: String, r: String) =>
-    // _notify.received(this, "b")
     this.split_left(l)
     this.split_right(r)
 

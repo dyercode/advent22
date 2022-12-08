@@ -25,10 +25,9 @@ class iso _TestFindDuplicate is UnitTest
     fun name(): String => "find the duplicate 'package'"
 
     fun apply(h: TestHelper) =>
-      let p: m.DupeFinder = m.DupeFinder(recover TestNotifier(h, "a") end)
       let left =  "abcdefghijklm"
       let right = "nopqrstuvwxya"
-      let subject = p.find_duplicate(left, right)
+      let p: m.DupeFinder = m.DupeFinder(recover TestNotifier(h, "a") end, left, right)
       h.long_test(2_000_000_000)
 
     fun timed_out(h:TestHelper) =>
