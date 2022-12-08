@@ -53,12 +53,9 @@ actor DupeFinder
   let _notify: Notified
 
   new create(notify: Notified iso, l: String, r: String) =>
-    _left = Array[U8](l.size())
     _right = Array[U8](r.size())
     _notify = consume notify
-    for letter in l.values() do
-      _left.push(letter)
-    end
+    _left = l.array().clone()
     this.split_right(r)
 
   be split_right(rs: String) =>
