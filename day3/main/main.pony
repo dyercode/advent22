@@ -56,30 +56,16 @@ actor DupeFinder
     _left = Array[U8](l.size())
     _right = Array[U8](r.size())
     _notify = consume notify
-    this.split_left(l)
-    this.split_right(r)
-
-  be split_left(ls: String) =>
-    for l in ls.values() do
-      if not _done then
-        this.left(l)
-      end
+    for letter in l.values() do
+      _left.push(letter)
     end
+    this.split_right(r)
 
   be split_right(rs: String) =>
     for r in rs.values() do
       if not _done then
         right(r)
       end
-    end
-
-  be left(s: U8) =>
-    if _right.contains(s) then
-      let answer: String iso = String.create(1)
-      answer.push(s)
-      _notify.received(this, consume answer)
-    elseif (not _left.contains(s)) then
-      _left.push(consume s)
     end
 
   be right(s: U8) =>
