@@ -47,8 +47,8 @@ class Parser
 
 
 actor DupeFinder
-  let _left: Array[String] = Array[String](24) // longest line in input is 48
-  let _right: Array[String] = Array[String](24)
+  let _left: Array[U32] = Array[U32](24) // longest line in input is 48
+  let _right: Array[U32] = Array[U32](24)
   var _done: Bool = false
   let _notify: Notified
 
@@ -56,17 +56,37 @@ actor DupeFinder
     _notify = consume notify
 
   be find_duplicate(l: String, r: String) =>
-    _notify.received(this, "b")
+    // _notify.received(this, "b")
+    this.split_left(l)
+    this.split_right(r)
 
-  be left(s: String) =>
-    if _right.contains(s) then
-      _notify.received(this, s)
-    elseif (not _left.contains(s)) then
-      _left.push(s)
+  be split_left(ls: String) =>
+    for l in ls.runes() do
+      if not _done then
+        this.left(l)
+      end
     end
 
-  fun _find_duplicate(a: String, b: String): String =>
-    "b"
+  be split_right(rs: String) =>
+    for r in rs.runes() do
+      if not _done then
+        right(r)
+      end
+    end
+
+  be left(s: U32) =>
+    if _right.contains(s) then
+      _notify.received(this, String.from_utf32(s))
+    elseif (not _left.contains(s)) then
+      _left.push(consume s)
+    end
+
+  be right(s: U32) =>
+    if _left.contains(s) then
+      _notify.received(this, String.from_utf32(s))
+    elseif (not _right.contains(s)) then
+      _right.push(consume s)
+    end
 
 interface Notified
   fun ref received(rec: DupeFinder ref, msg: String)

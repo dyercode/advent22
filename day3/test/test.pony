@@ -26,8 +26,8 @@ class iso _TestFindDuplicate is UnitTest
 
     fun apply(h: TestHelper) =>
       let p: m.DupeFinder = m.DupeFinder(recover TestNotifier(h, "a") end)
-      let left =  "aabcdefghijkl"
-      let right = "mnopqrstuvwxy"
+      let left =  "abcdefghijklm"
+      let right = "nopqrstuvwxya"
       let subject = p.find_duplicate(left, right)
       h.long_test(2_000_000_000)
 
