@@ -17,7 +17,8 @@ type Throw is (Rock | Paper | Scissors)
 actor Main
   new create(env: Env) =>
     let path = FilePath(FileAuth(env.root), "../input/day3.txt")
-    let pars = ByLine(env)
+    let summer = Summer(env)
+    let pars = ByLine(env, summer)
     match OpenFile(path)
     | let file: File =>
       env.out.print("opened file")
@@ -26,19 +27,29 @@ actor Main
       end
     end
 
-actor ByLine
-  let _pack_inspector: PackInspector
+actor Summer
   let _env: Env
+  var _tot: U32 = 0
 
   new create(env: Env) =>
-    _pack_inspector = PackInspector
     _env = env
 
-  be split_pack(s: String) =>
-    _pack_inspector.inspect(s, _env)
+  be add(p: U8) =>
+    _tot = _tot + p.u32()
+    _env.out.print(_tot.string())
 
-  fun halves(s: String): (String, String) =>
-    s.clone().chop(s.size() / 2)
+
+actor ByLine
+  let _env: Env
+  let _summer: Summer
+
+  new create(env: Env, summer: Summer) =>
+    _env = env
+    _summer = summer
+
+  be split_pack(s: String) =>
+    (let left, let right) = Parser.halves(s)
+    let df = DupeFinder(Notifier(_summer), left, right)
 
 
 class Parser
@@ -81,17 +92,14 @@ actor DupeFinder
 interface Notified
   fun ref received(rec: DupeFinder ref, msg: String)
 
-actor PackInspector
-  new create() =>
-    None
+class Notifier is Notified
+  let _summer: Summer
 
-  be inspect(s: String, env: Env) =>
-    None
-    /*
-    let len = s.
-    (let opp: String, let me: String) = s.clone().chop(1)
-    match (parse_opponent(opp), parse_me(me.trim(1)))
-    | (let op: Throw, let m: Throw) =>
-      _judge.report(op, m)
-    end
-    */
+  new create(summer: Summer) =>
+    _summer = summer
+
+  fun ref received(rec: DupeFinder ref, msg: String) =>
+    _summer.add(Priority.calc(msg))
+
+
+
