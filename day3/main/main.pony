@@ -45,20 +45,17 @@ class Parser
   fun halves(s: String): (String, String) =>
     s.clone().chop(s.size() / 2)
 
-
 actor DupeFinder
   let _left: Array[U8]
-  let _right: Array[U8]
   var _done: Bool = false
   let _notify: Notified
 
   new create(notify: Notified iso, l: String, r: String) =>
-    _right = Array[U8](r.size())
     _notify = consume notify
     _left = l.array().clone()
-    this.split_right(r)
+    this.check_right(r)
 
-  be split_right(rs: String) =>
+  be check_right(rs: String) =>
     for r in rs.values() do
       if not _done then
         right(r)
@@ -70,8 +67,6 @@ actor DupeFinder
       let answer: String iso = String.create(1)
       answer.push(s)
       _notify.received(this, consume answer)
-    elseif (not _right.contains(s)) then
-      _right.push(consume s)
     end
 
 interface Notified
