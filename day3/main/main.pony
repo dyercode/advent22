@@ -47,42 +47,46 @@ class Parser
 
 
 actor DupeFinder
-  let _left: Array[U32]
-  let _right: Array[U32]
+  let _left: Array[U8]
+  let _right: Array[U8]
   var _done: Bool = false
   let _notify: Notified
 
   new create(notify: Notified iso, l: String, r: String) =>
-    _left = Array[U32](l.size())
-    _right = Array[U32](r.size())
+    _left = Array[U8](l.size())
+    _right = Array[U8](r.size())
     _notify = consume notify
     this.split_left(l)
     this.split_right(r)
 
   be split_left(ls: String) =>
-    for l in ls.runes() do
+    for l in ls.values() do
       if not _done then
         this.left(l)
       end
     end
 
   be split_right(rs: String) =>
-    for r in rs.runes() do
+    for r in rs.values() do
       if not _done then
         right(r)
       end
     end
 
-  be left(s: U32) =>
+  be left(s: U8) =>
     if _right.contains(s) then
-      _notify.received(this, String.from_utf32(s))
+      let answer: String iso = String.create(1)
+      answer.push(s)
+      _notify.received(this, consume answer)
     elseif (not _left.contains(s)) then
       _left.push(consume s)
     end
 
-  be right(s: U32) =>
+  be right(s: U8) =>
     if _left.contains(s) then
-      _notify.received(this, String.from_utf32(s))
+      let answer: String iso = String.create(1)
+      answer.push(s)
+      _notify.received(this, consume answer)
     elseif (not _right.contains(s)) then
       _right.push(consume s)
     end
