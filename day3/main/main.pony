@@ -40,9 +40,36 @@ actor ByLine
   fun halves(s: String): (String, String) =>
     s.clone().chop(s.size() / 2)
 
+
 class Parser
   fun halves(s: String): (String, String) =>
     s.clone().chop(s.size() / 2)
+
+
+actor DupeFinder
+  let _left: Array[String] = Array[String](24) // longest line in input is 48
+  let _right: Array[String] = Array[String](24)
+  var _done: Bool = false
+  let _notify: Notified
+
+  new create(notify: Notified iso) =>
+    _notify = consume notify
+
+  be find_duplicate(l: String, r: String) =>
+    _notify.received(this, "b")
+
+  be left(s: String) =>
+    if _right.contains(s) then
+      _notify.received(this, s)
+    elseif (not _left.contains(s)) then
+      _left.push(s)
+    end
+
+  fun _find_duplicate(a: String, b: String): String =>
+    "b"
+
+interface Notified
+  fun ref received(rec: DupeFinder ref, msg: String)
 
 actor PackInspector
   new create() =>
