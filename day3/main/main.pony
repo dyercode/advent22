@@ -46,24 +46,23 @@ class Parser
     s.clone().chop(s.size() / 2)
 
 actor DupeFinder
-  let _left: Array[U8]
   var _done: Bool = false
+  let _left: Array[U8]
   let _notify: Notified
 
   new create(notify: Notified iso, l: String, r: String) =>
     _notify = consume notify
     _left = l.array().clone()
-    this.check_right(r)
+    check_right(r)
 
-  be check_right(rs: String) =>
+  fun check_right(rs: String) =>
     for r in rs.values() do
-      if not _done then
-        right(r)
-      end
+      this.right(r)
     end
 
   be right(s: U8) =>
-    if _left.contains(s) then
+    if not _done and _left.contains(s) then
+      _done = true
       let answer: String iso = String.create(1)
       answer.push(s)
       _notify.received(this, consume answer)
