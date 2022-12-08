@@ -17,8 +17,8 @@ type Throw is (Rock | Paper | Scissors)
 actor Main
   new create(env: Env) =>
     let path = FilePath(FileAuth(env.root), "../input/day3.txt")
-    let summer = Summer(env)
-    let pars = ByLine(env, summer)
+    let summer = Summer(EnvPrinter(env))
+    let pars = ByLine(summer)
     match OpenFile(path)
     | let file: File =>
       env.out.print("opened file")
@@ -27,24 +27,34 @@ actor Main
       end
     end
 
-actor Summer
+interface box Printer
+  fun print(s: String iso): None
+
+class EnvPrinter
   let _env: Env
-  var _tot: U32 = 0
 
   new create(env: Env) =>
     _env = env
 
+  fun print(s: String) =>
+    _env.out.print(consume s)
+
+actor Summer
+  let _p: Printer
+  var _tot: U32 = 0
+
+  new create(p: Printer val) =>
+    _p = p
+
   be add(p: U8) =>
     _tot = _tot + p.u32()
-    _env.out.print(_tot.string())
+    _p.print(_tot.string())
 
 
 actor ByLine
-  let _env: Env
   let _summer: Summer
 
-  new create(env: Env, summer: Summer) =>
-    _env = env
+  new create(summer: Summer) =>
     _summer = summer
 
   be split_pack(s: String) =>
