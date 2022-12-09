@@ -15,8 +15,8 @@ type Throw is (Rock | Paper | Scissors)
 actor Main
   new create(env: Env) =>
     let path = FilePath(FileAuth(env.root), "../input/day3.txt")
-    let summer = Summer(EnvPrinter(env))
-    let pars = ByLine(summer)
+    let summer: Summer = Summer(recover EnvPrinter(env) end)
+    let pars: ByLine = ByLine(summer)
     match OpenFile(path)
     | let file: File =>
       env.out.print("opened file")
@@ -81,7 +81,7 @@ class DupeFinder
 
   fun unique(cs: String): String =>
     let sorted = Sort[Array[U8], U8](cs.array().clone())
-    let res: String iso = String.create(sorted.size())
+    let res: String iso = recover String.create(sorted.size()) end
     try
       var last: U8 = sorted.shift()?
       res.push(last)
@@ -96,7 +96,7 @@ class DupeFinder
 
   fun triple(cs: String): String =>
     let sorted = Sort[Array[U8], U8](cs.array().clone())
-    let res: String iso = String.create(1)
+    let res: String iso = recover String.create(1) end
     try
       var next_last: U8 = sorted.shift()?
       var last: U8 = sorted.shift()?
