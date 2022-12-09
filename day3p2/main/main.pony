@@ -56,10 +56,31 @@ actor ByLine
       end
     end
 
+class Priority
+  fun calc(s: String): U8 =>
+    let lookup = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    try
+      lookup.find(s)?.u8() + 1
+    else
+      0
+    end
 
-class Parser
+class DupeFinder
+  fun find(one: String, two: String, three: String): String =>
+    let o: String = unique(one)
+    let tw: String= unique(two)
+    let th: String = unique(three)
+    let concat: String iso = recover String(o.size()
+      + tw.size()
+      + th.size()) end
+
+    concat.append(consume o)
+    concat.append(consume tw)
+    concat.append(consume th)
+    triple(consume concat)
+
   fun unique(cs: String): String =>
-    let sorted = Sort[Array[U8], U8](cs.array().clone()).clone()
+    let sorted = Sort[Array[U8], U8](cs.array().clone())
     let res: String iso = String.create(sorted.size())
     try
       var last: U8 = sorted.shift()?
@@ -73,42 +94,23 @@ class Parser
     end
     res
 
-
-class Priority
-  fun calc(s: String): U8 =>
-    let lookup = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  fun triple(cs: String): String =>
+    let sorted = Sort[Array[U8], U8](cs.array().clone())
+    let res: String iso = String.create(1)
     try
-      lookup.find(s)?.u8() + 1
-    else
-      0
+      var next_last: U8 = sorted.shift()?
+      var last: U8 = sorted.shift()?
+      for s in sorted.values() do
+        if (s == last) and (s == next_last) then
+          res.push(consume s)
+          break
+        else
+          next_last = last
+          last = consume s
+        end
+      end
     end
-
-type UniqueChars is HashSet[U8, HashEq[U8]]
-
-class DupeFinder
-  fun find(one: String, two: String, three: String): String =>
-    let first: UniqueChars = scribe(one)
-    let second: UniqueChars = scribe(two)
-    let third: UniqueChars = scribe(three)
-    var all = first.op_and(consume second)
-    all = all.op_and(consume third)
-    try
-      let badge = all.index(all.next_index()?)?
-
-      let answer: String iso = String.create(1)
-      let restring = String.from_array([badge])
-      answer.push(consume badge)
-      answer
-    else
-      ""
-    end
-
-  fun scribe(pack: String): UniqueChars =>
-    let letters = HashSet[U8, HashEq[U8]](pack.size())
-    for c in pack.array().values() do
-      letters.set(consume c)
-    end
-    letters
+    res
 
 interface box Printer
   fun print(s: String iso): None

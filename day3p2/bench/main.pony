@@ -30,14 +30,14 @@ class _Parser is MicroBenchmark
     _s = s
 
   fun name(): String =>
-    "_Parser(" + _s + ")"
+    "_DupeFinder.unique(" + _s + ")"
 
   fun apply() =>
     DoNotOptimise[String](_unique())
     DoNotOptimise.observe()
 
   fun _unique(): String =>
-    m.Parser.unique(_s)
+    m.DupeFinder.unique(_s)
 
 class _DupeFinder is MicroBenchmark
   let _s: (String, String, String)
@@ -46,7 +46,7 @@ class _DupeFinder is MicroBenchmark
     _s = s
 
   fun name(): String =>
-    "_DupeFinder(" + _s._1 + "," + _s._2 + "," + _s._3 + ")"
+    "_DupeFinder.triple(" + _s._1 + "," + _s._2 + "," + _s._3 + ")"
 
   fun apply() =>
     DoNotOptimise[String](_find())
