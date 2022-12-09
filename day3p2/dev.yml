@@ -1,3 +1,4 @@
 commands:
   build: ponyc main/
   test: ponyc test/ && ./test1
+  clean: rm -f test1
