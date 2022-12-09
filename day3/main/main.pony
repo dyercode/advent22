@@ -17,7 +17,7 @@ type Throw is (Rock | Paper | Scissors)
 actor Main
   new create(env: Env) =>
     let path = FilePath(FileAuth(env.root), "../input/day3.txt")
-    let summer = Summer(EnvPrinter(env))
+    let summer: Summer = Summer(recover EnvPrinter(env) end)
     let pars = ByLine(summer)
     match OpenFile(path)
     | let file: File =>
@@ -59,7 +59,7 @@ actor ByLine
 
   be split_pack(s: String) =>
     (let left, let right) = Parser.halves(s)
-    let df = DupeFinder(Notifier(_summer), left, right)
+    let df = DupeFinder(recover Notifier(_summer) end, left, right)
 
 
 class Parser
@@ -94,7 +94,7 @@ actor DupeFinder
   be right(s: U8) =>
     if not _done and _left.contains(s) then
       _done = true
-      let answer: String iso = String.create(1)
+      let answer: String iso = recover String.create(1) end
       answer.push(s)
       _notify.received(this, consume answer)
     end
